@@ -10,13 +10,13 @@
 #             Channels are stored in subs.json, the format you can see there.
 #             Some channels will have the channel_id in the URL. It's usually
 #             a long string of letters and numbers starting with UC. For
-#             channels that don't, right click and select "View page source".
+#             channels that don't, right click and select "View Page Source".
 #             Use Ctrl+F to search for "channel_id=" and copy the string
 #             from there.
 #
 # Requires feedparser (pip install feedparser).
 
-import datetime, feedparser, json, time
+import datetime, feedparser, json
 
 feedb = "https://www.youtube.com/feeds/videos.xml?channel_id="
 # Set days= to whatever number you want if a week is too much or too little.
