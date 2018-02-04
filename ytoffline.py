@@ -1,22 +1,21 @@
 # m-we
-# v1.0.0
-# ytoffline - Command-line YouTube subscriptions without an account. Created
-#             for the privacy-conscious. This doesn't prevent Google/YouTube
-#             from tracking you, but it does make it slightly more difficult
-#             by not having all the data nice and bundled up with an account.
-#             For those with a VPN, this lets you effectively subscribe to
-#             channels anonymously.
+# v1.0.1 (2018-01-22)
+# ytoffline - Command-line YouTube subscriptions for those looking for privacy.
+#             Combined with a VPN, allows you to subscribe to channels without
+#             having your data linked to an account or your identity. For the
+#             paranoid, there is an option to download the file to your
+#             computer to avoid using a browser. Enter "a url" to download
+#             audio, "aw url" to download the worst audio. "vw url" and
+#             "v url" work similarly, but download both video and audio.
 #
-#             Channels are stored in subs.json, the format you can see there.
-#             Some channels will have the channel_id in the URL. It's usually
-#             a long string of letters and numbers starting with UC. For
-#             channels that don't, right click and select "View Page Source".
-#             Use Ctrl+F to search for "channel_id=" and copy the string
-#             from there.
+#             To add a channel to subs.json, use the channel ID. This is often
+#             in the URL (youtube.com/channel/UC123...ABC). If it isn't, go to
+#             the channel page, view the page source, and search for
+#             channel_id= using CTRL+F.
 #
-# Requires feedparser (pip install feedparser).
+# Requires feedparser, youtube-dl.
 
-import datetime, feedparser, json
+import datetime, feedparser, json, time, youtube_dl
 
 feedb = "https://www.youtube.com/feeds/videos.xml?channel_id="
 # Set days= to whatever number you want if a week is too much or too little.
@@ -26,7 +25,7 @@ db = datetime.datetime.now() - datetime.timedelta(days=7)
 bench = int(str(db)[0:10].replace("-", ""))
 
 # Does everything.
-def main():
+def Subs():
     urls = []
     # See example subs.json for formatting. Fairly simple.
     with open("subs.json", "r") as fp:
@@ -36,7 +35,7 @@ def main():
     for sub in subs:
         # Print all of the initial stuff on the same line to save space.
         print("Retrieving videos from " + sub + ".", end="\t\t\t\t\t\t\t\t\r")
-        feed = feedparser.parse(feedb + subs[sub]["id"])
+        feed = feedparser.parse(feedb + subs[sub])
         for j in feed["items"]:
             # Get int of publication date and verify it's within the past week.
             draw = j["published_parsed"]
@@ -44,11 +43,8 @@ def main():
             if d >= bench:
                 # Append data to a list to be sorted by publication date.
                 dat = [
-                    j["published_parsed"],
-                    sub,
-                    j["link"],
-                    j["media_thumbnail"][0]["url"],
-                    j["title"]
+                    j["published_parsed"], sub, j["link"],
+                    j["media_thumbnail"][0]["url"], j["title"]
                 ]
                 vids.append(dat)
 
@@ -60,6 +56,34 @@ def main():
         d = str(v[0].tm_year) + "-" + str(v[0].tm_mon) + "-" + str(v[0].tm_mday)
         print(v[1] + " - " + v[4] + " - " + d + " - " + v[2])
 
-if __name__ == '__main__':
+def Process(cmd):
+    if cmd.startswith("aw "):
+        fname = "tmp/" + cmd.split("?v=")[1] + ".m4a"
+        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
+                                    "format": "worstaudio[ext=m4a]"})
+        r = ydl.extract_info(cmd[2:], download=True)
+    elif cmd.startswith("a "):
+        fname = "tmp/" + cmd.split("?v=")[1] + ".m4a"
+        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
+                                    "format": "bestaudio[ext=m4a]"})
+        r = ydl.extract_info(cmd[2:], download=True)
+    elif cmd.startswith("vw "):
+        fname = "tmp/" + cmd.split("?v=")[1] + ".mp4"
+        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
+                                    "format": "worstvideo+worstaudio"})
+    elif cmd.startswith("v "):
+        fname = "tmp/" + cmd.split("?v=")[1] + ".mp4"
+        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
+                                    "format": "bestvideo+bestaudio"})
+
+def main():
+    Subs()
+    print("\n")
+    cmd = 0
+    while cmd != "":
+        cmd = input("> ")
+        Process(cmd)
+
+if __name__ == "__main__":
     main()
     input("\n\nPress enter to exit.")
