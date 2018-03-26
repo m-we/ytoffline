@@ -1,21 +1,18 @@
 # m-we
-# v1.0.1 (2018-01-22)
-# ytoffline - Command-line YouTube subscriptions for those looking for privacy.
-#             Combined with a VPN, allows you to subscribe to channels without
-#             having your data linked to an account or your identity. For the
-#             paranoid, there is an option to download the file to your
-#             computer to avoid using a browser. Enter "a url" to download
-#             audio, "aw url" to download the worst audio. "vw url" and
-#             "v url" work similarly, but download both video and audio.
+# v1.0.2 (2018-03-26)
+# ytoffline - YouTube subscriptions without all of the fuckery, and privacy for
+#             those who don't want an account.
 #
 #             To add a channel to subs.json, use the channel ID. This is often
 #             in the URL (youtube.com/channel/UC123...ABC). If it isn't, go to
 #             the channel page, view the page source, and search for
 #             channel_id= using CTRL+F.
 #
-# Requires feedparser, youtube-dl.
+# Requires feedparser.
 
-import datetime, feedparser, json, time, youtube_dl
+import datetime
+import feedparser
+import json
 
 feedb = "https://www.youtube.com/feeds/videos.xml?channel_id="
 # Set days= to whatever number you want if a week is too much or too little.
@@ -56,33 +53,8 @@ def Subs():
         d = str(v[0].tm_year) + "-" + str(v[0].tm_mon) + "-" + str(v[0].tm_mday)
         print(v[1] + " - " + v[4] + " - " + d + " - " + v[2])
 
-def Process(cmd):
-    if cmd.startswith("aw "):
-        fname = "tmp/" + cmd.split("?v=")[1] + ".m4a"
-        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
-                                    "format": "worstaudio[ext=m4a]"})
-        r = ydl.extract_info(cmd[2:], download=True)
-    elif cmd.startswith("a "):
-        fname = "tmp/" + cmd.split("?v=")[1] + ".m4a"
-        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
-                                    "format": "bestaudio[ext=m4a]"})
-        r = ydl.extract_info(cmd[2:], download=True)
-    elif cmd.startswith("vw "):
-        fname = "tmp/" + cmd.split("?v=")[1] + ".mp4"
-        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
-                                    "format": "worstvideo+worstaudio"})
-    elif cmd.startswith("v "):
-        fname = "tmp/" + cmd.split("?v=")[1] + ".mp4"
-        ydl = youtube_dl.YoutubeDL({"outtmpl": fname,
-                                    "format": "bestvideo+bestaudio"})
-
 def main():
     Subs()
-    print("\n")
-    cmd = 0
-    while cmd != "":
-        cmd = input("> ")
-        Process(cmd)
 
 if __name__ == "__main__":
     main()
