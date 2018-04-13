@@ -1,7 +1,8 @@
 # m-we
-# v1.0.2 (2018-03-26)
-# ytoffline - YouTube subscriptions without all of the fuckery, and privacy for
-#             those who don't want an account.
+# v1.0.3 (2018-04-13)
+# ytoffline - YouTube subscriptions plain and simple, no algorithms. Also
+#             useful for those looking for privacy who don't want their
+#             subscriptions associated with a Google account.
 #
 #             To add a channel to subs.json, use the channel ID. This is often
 #             in the URL (youtube.com/channel/UC123...ABC). If it isn't, go to
@@ -31,7 +32,7 @@ def Subs():
     vids = []
     for sub in subs:
         # Print all of the initial stuff on the same line to save space.
-        print("Retrieving videos from " + sub + ".", end="\t\t\t\t\t\t\t\t\r")
+        print("Retrieving videos from " + sub + ".", end="\r")
         feed = feedparser.parse(feedb + subs[sub])
         for j in feed["items"]:
             # Get int of publication date and verify it's within the past week.
@@ -53,9 +54,5 @@ def Subs():
         d = str(v[0].tm_year) + "-" + str(v[0].tm_mon) + "-" + str(v[0].tm_mday)
         print(v[1] + " - " + v[4] + " - " + d + " - " + v[2])
 
-def main():
-    Subs()
-
 if __name__ == "__main__":
-    main()
-    input("\n\nPress enter to exit.")
+    Subs()
