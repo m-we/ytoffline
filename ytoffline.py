@@ -56,3 +56,4 @@ def Subs():
 
 if __name__ == "__main__":
     Subs()
+    input("\n\nPress enter to exit.")
