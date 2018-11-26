@@ -10,16 +10,13 @@ feedb = 'https://www.youtube.com/feeds/videos.xml?channel_id='
 db = datetime.datetime.now() - datetime.timedelta(days=7)
 bench = int(str(db)[0:10].replace('-', ''))
 
-# Does everything.
 def Subs():
     urls = []
-    # See example subs.json for formatting. Fairly simple.
     with open('subs.json', 'r') as fp:
         subs = json.load(fp)
 
     vids = []
     for sub in subs:
-        # Print all of the initial stuff on the same line to save space.
         print('Retrieving videos from ' + sub, end='\r')
         feed = feedparser.parse(feedb + subs[sub])
         for j in feed['items']:
@@ -34,9 +31,6 @@ def Subs():
                 ]
                 vids.append(dat)
 
-    # Sort by published date. Most recent videos are printed last, so less
-    # scrolling has to be done to find them. URLs can be copied and pasted
-    # from the command line.
     vids = sorted(vids)
     for v in vids:
         d = str(v[0].tm_year) + '-' + str(v[0].tm_mon) + '-' + str(v[0].tm_mday)
