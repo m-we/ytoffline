@@ -1,41 +1,51 @@
 import datetime
-import json
+import re
+import urllib.request
 
-import feedparser
+def parse(text):
+    n = text[text.find('<name>')+6:text.find('</name')]
+    pub = []
+    title = []
+    link = []
 
-feedb = 'https://www.youtube.com/feeds/videos.xml?channel_id='
-# Set days= to whatever number you want if a week is too much or too little.
-# Feedparser returns a limited number of videos, however, so setting days to
-# 10000 probably won't return every video a channel has ever uploaded.
-db = datetime.datetime.now() - datetime.timedelta(days=7)
-bench = int(str(db)[0:10].replace('-', ''))
+    for x in re.findall('(?<=published>).*(?=T)', text):
+        pub.append(x)
+    for x in re.findall('(?<=title>).*(?=</ti)', text):
+        title.append(x)
+    for x in re.findall('(?<=href=")https://www.youtube.com/watch.*(?=")', text):
+        link.append(x)
+    del pub[0]
+    del title[0]
 
-def Subs():
-    urls = []
-    with open('subs.json', 'r') as fp:
-        subs = json.load(fp)
+    dat = []
+    for x in range(len(link)):
+        dat.append([pub[x], title[x], link[x], n])
+    return dat
+
+def subs():
+    feed = 'https://www.youtube.com/feeds/videos.xml?channel_id='
+    db = datetime.datetime.now() - datetime.timedelta(days=7)
+    bench = int(str(db)[0:10].replace('-', ''))
+    
+    subs = {}
+    with open('subs.txt', 'r') as fp:
+        for line in fp:
+            u, i = line.replace('\n', '').split('|')
+            subs[u] = i
 
     vids = []
     for sub in subs:
         print('Retrieving videos from ' + sub, end='\r')
-        feed = feedparser.parse(feedb + subs[sub])
-        for j in feed['items']:
-            # Get int of publication date and verify it's within the past week.
-            draw = j['published_parsed']
-            d = draw.tm_year * 10000 + draw.tm_mon * 100 + draw.tm_mday
-            if d >= bench:
-                # Append data to a list to be sorted by publication date.
-                dat = [
-                    j['published_parsed'], sub, j['link'],
-                    j['media_thumbnail'][0]['url'], j['title']
-                ]
-                vids.append(dat)
-
+        url = feed + subs[sub]
+        text = urllib.request.urlopen(url).read().decode()
+        dat = parse(text)
+        for v in dat:
+            vids.append(v)
     vids = sorted(vids)
     for v in vids:
-        d = str(v[0].tm_year) + '-' + str(v[0].tm_mon) + '-' + str(v[0].tm_mday)
-        print(v[1] + ' - ' + v[4] + ' - ' + d + ' - ' + v[2])
+        if int(v[0].replace('-','')) >= bench:
+            print(v[3] + ' - ' + v[1] + ', ' + v[0] + ' ' + v[2])
 
 if __name__ == '__main__':
-    Subs()
-    input('\n\nPress enter to exit.')
+    subs()
+    input('\nPress enter to exit.')
