@@ -1,1 +1,1 @@
-Requires feedparser, which you can get through pip. To add a channel put its name and channel ID into subs.json. This isn't as pretty as the subscription page on YouTube, but you don't need a Google account to use it.
+Add subs to subs.txt with the format channel_name|channel_id. Limit of 15 videos per channel b/c this is how YouTube does their RSS feeds. Not as pretty as a subscription page, but you don't need a Google account to use it.
