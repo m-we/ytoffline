@@ -36,8 +36,7 @@ def subs():
     vids = []
     for sub in subs:
         print('Retrieving videos from ' + sub, end='\r')
-        url = feed + subs[sub]
-        text = urllib.request.urlopen(url).read().decode()
+        text = urllib.request.urlopen(feed + subs[sub]).read().decode()
         dat = parse(text)
         for v in dat:
             vids.append(v)
