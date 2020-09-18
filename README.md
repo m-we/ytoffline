@@ -1,1 +1,3 @@
-Add subs to subs.txt with the format channel_name|channel_id. Limit of 15 videos per channel b/c that's how YouTube does their RSS feeds. Not as pretty as a subscription page, but you don't need a Google account to use it. Lists videos from the past week by default. You can change this in the scripts.
+Add subs to subs.txt with the format CHANNEL_NAME|CHANNEL_ID. A channel's ID is a long string of letters, numbers, and symbols starting with UC. It may be in the channel URL (https://www.youtube.com/channel/UCupvZG-5ko_eiXAupbDfxWw). If it isn't, you can Right Click>View Page Source. Press CTRL+F and type channel_id= and copy it from there. There is a limit of 15 videos per channel because that's how YouTube does their RSS feeds. It's not as pretty as a subscription page, but you don't need a Google account to use it. Lists videos from the past week by default. You can change this in the scripts.
+
+!(https://github.com/m-we/ytoffline/blob/master/example.jpg?raw=true))
