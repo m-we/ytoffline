@@ -3,3 +3,5 @@ One Python script and one Go script (you only need one) which retrieve videos up
 Add subs to subs.txt with the format CHANNEL_NAME|CHANNEL_ID, one per line. A channel's ID is a long string of letters, numbers, and symbols starting with UC. It may be in the channel URL (https://www.youtube.com/channel/UCupvZG-5ko_eiXAupbDfxWw). If it isn't, you can Right Click>View Page Source. Press CTRL+F and type channel_id= and copy it from there.
 
 ![](https://github.com/m-we/ytoffline/blob/master/example.jpg?raw=true)
+
+<a href="url"><img src="https://github.com/m-we/ytoffline/blob/master/example.jpg?raw=true" align="left" height="400" ></a>
